@@ -1,0 +1,577 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMXG Open</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* === GENERAL STYLES & NEW BACKGROUND === */
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #e0e0e0;
+      background-image: url('pattern.png');
+      background-repeat: repeat;
+      background-color: #000;
+      /* EDITED: Control the size of the repeating background pattern. Adjust this value as needed. */
+      background-size: 400px; 
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background-color: #000;
+      border-bottom: 1px solid #333;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .logo {
+      height: 40px;
+      flex-shrink: 0;
+    }
+    .nav {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      color: #ffd700;
+      font-family: 'Roboto', sans-serif;
+    }
+    .nav-icon {
+      height: 24px;
+      width: 24px;
+      object-fit: contain;
+    }
+    .content {
+      padding: 10px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h2, h3 {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* === SECTION STYLES for semi-transparent overlay === */
+    .countdown-section {
+      background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(0, 0, 0, 0.8));
+      color: #f0f0f0;
+      padding: 15px; 
+      margin-bottom: 15px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(4px); /* Glass effect */
+    }
+    .about-section, .latest, .sponsors {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      backdrop-filter: blur(4px); /* Glass effect */
+    }
+    .about-section h2, .latest h2, .sponsors h2 {
+        color: #ffd700;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+    }
+    .about-section p, .sponsors p {
+        line-height: 1.6;
+    }
+
+
+    .countdown-section h2 {
+      color: #fff;
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+      margin-top: 0;
+      margin-bottom: 5px;
+    }
+    #countdown {
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: bold;
+      color: #ffd700;
+      margin-bottom: 0; 
+      display: block;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      white-space: nowrap;
+      font-size: clamp(1.8rem, 5vw, 2.8rem); 
+      letter-spacing: clamp(1px, 0.5vw, 4px);
+    }
+    .sponsors {
+       /* Uses the unified style */
+    }
+    .footer {
+      text-align: center;
+      padding: 15px;
+      margin-top: 20px;
+      background-color: #000;
+      color: #ffd700;
+      font-size: 12px;
+      font-family: 'Roboto', sans-serif;
+    }
+    .sponsor-logos {
+      margin-top: 15px;
+      position: relative;
+      height: 350px;
+      overflow: hidden;
+      border-radius: 3px;
+    }
+    .sponsor-logo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .fade {
+      animation-name: fade;
+      animation-duration: 1.5s;
+    }
+    @keyframes fade {
+      from {opacity: .4}
+      to {opacity: 1}
+    }
+
+
+    /* --- DROPDOWN MENU STYLES --- */
+    .dropdown-container {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background-color: #000;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+      z-index: 10;
+      border: 1px solid #ffd700;
+      border-radius: 5px;
+      margin-top: 8px;
+    }
+    .dropdown-content a {
+      color: #ffd700;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      text-align: left;
+      font-weight: 600;
+      font-family: 'Roboto', sans-serif;
+    }
+    .dropdown-content a:hover {
+      background-color: #333;
+    }
+    .show {
+      display: block;
+    }
+
+    /* === NEWS CARD STYLES === */
+    .news-slider-container {
+      position: relative;
+    }
+    .news-grid {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 10px 0;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .news-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .news-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      text-decoration: none;
+      color: #fff;
+      background-color: #333;
+      border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+      width: 85%;
+      height: 280px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .news-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+    .news-card-background-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      z-index: 0;
+      transition: transform 0.4s ease-in-out;
+    }
+    .news-card:hover .news-card-background-image {
+      transform: scale(1.08);
+    }
+    .news-card::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 80%;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 20%, transparent 100%);
+      z-index: 1;
+    }
+    .news-card-content {
+      position: relative;
+      z-index: 2;
+      padding: 15px;
+    }
+    .news-card-tag {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #e0e0e0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .news-card-content h3 {
+      margin: 0 0 10px 0;
+      font-size: 1.2em;
+      color: #fff;
+      line-height: 1.3;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    }
+    .news-card-timestamp {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 600;
+      color: #e0e0e0;
+      text-transform: uppercase;
+    }
+    .slider-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s ease;
+    }
+    .slider-arrow:hover {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+    .prev-arrow {
+      left: -22px;
+    }
+    .next-arrow {
+      right: -22px;
+    }
+
+
+    /* --- MOBILE RESPONSIVE FIXES --- */
+    @media (max-width: 480px) {
+      .header {
+        padding: 10px 10px;
+      }
+      .nav {
+        flex-grow: 1;
+        justify-content: space-around;
+        gap: 0;
+        margin-left: 10px;
+      }
+      .nav-item span {
+        font-size: 10px;
+      }
+    }
+
+    /* --- DESKTOP LAYOUT --- */
+    @media (min-width: 768px) {
+      .content {
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      .main-column {
+        flex: 2;
+      }
+      .sidebar-column {
+        flex: 1;
+      }
+      .news-card {
+        width: calc(50% - 10px);
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .news-card {
+         width: calc(33.333% - 14px);
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="logo.png" alt="CMXG Open Logo" class="logo">
+    <div class="nav">
+      <button class="nav-item">
+        <img src="leaderboard.png" alt="Leaderboard" class="nav-icon">
+        <span>Leaderboard</span>
+      </button>
+      <button class="nav-item">
+        <img src="register.png" alt="register" class="nav-icon">
+        <span>Register</span>
+      </button>
+      <button class="nav-item">
+        <img src="sabotage.png" alt="sabotage" class="nav-icon">
+        <span>Sabotage</span>
+      </button>
+
+      <div class="dropdown-container">
+        <button id="menuBtn" class="nav-item">
+          <img src="menu.png" alt="Menu" class="nav-icon">
+          <span>Menu</span>
+        </button>
+        <div id="myDropdown" class="dropdown-content">
+          <a href="#about">About Us</a>
+          <a href="#rules">Tournament Rules</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="main-column">
+      <div class="countdown-section">
+        <h2>76 CMXG Open Countdown</h2>
+        <p id="countdown">Calculating...</p>
+      </div>
+      <div class="about-section">
+        <h2>About The Tournament</h2>
+        <p>Get ready, Oklahoma! The 76th Commodities Maintenance Branch from Tinker Air Force Base is proud to present the 76 CMXG Golf Open Tournament, set to electrify the greens of the John Conrad Golf Course in Midwest City, Oklahoma, on June 5th, 2026! Prepare for a day of golf like no other, where skill meets a delightful dose of the unexpected.</p>
+      </div>
+      <div class="latest">
+        <h2>Latest News</h2>
+        <div class="news-slider-container">
+          <button id="prev-news" class="slider-arrow prev-arrow" aria-label="Previous News Item">&lt;</button>
+          <div class="news-grid">
+            <!-- News Card 1 -->
+            <a href="#" class="news-card">
+              <img src="pro.png" alt="#1 Ranked CMXG Pro" class="news-card-background-image">
+              <div class="news-card-content">
+                <span class="news-card-tag">PLAYER NEWS</span>
+                <h3>#1 Ranked CMXG Pro Retires After Spraining Liver</h3>
+                <p class="news-card-timestamp">3 HOURS AGO</p>
+              </div>
+            </a>
+            <!-- News Card 2 -->
+            <a href="#" class="news-card">
+              <img src="beer.PNG" alt="Cold Beer For Sale" class="news-card-background-image">
+              <div class="news-card-content">
+                <span class="news-card-tag">EVENT INFO</span>
+                <h3>Cold Beer For Sale</h3>
+                <p class="news-card-timestamp">1 DAY AGO</p>
+              </div>
+            </a>
+            <!-- News Card 3 -->
+            <a href="#" class="news-card">
+              <img src="sign.png" alt="Tournament Registration" class="news-card-background-image">
+              <div class="news-card-content">
+                <span class="news-card-tag">REGISTRATION</span>
+                <h3>Spots Still Available For the Tournament</h3>
+                <p class="news-card-timestamp">2 DAYS AGO</p>
+              </div>
+            </a>
+          </div>
+          <button id="next-news" class="slider-arrow next-arrow" aria-label="Next News Item">&gt;</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sidebar-column">
+      <div class="sponsors">
+        <h2>Sponsors</h2>
+        <p>Thank you to our partners for making this event possible.</p>
+        <div class="sponsor-logos">
+          <img src="ad (1).jpg" alt="Sponsor Ad 1" class="sponsor-logo">
+          <img src="ad (2).jpg" alt="Sponsor Ad 2" class="sponsor-logo">
+          <img src="ad (3).jpg" alt="Sponsor Ad 3" class="sponsor-logo">
+          <img src="ad (4).jpg" alt="Sponsor Ad 4" class="sponsor-logo">
+          <img src="ad (5).jpg" alt="Sponsor Ad 5" class="sponsor-logo">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>© 2026 CMXG Open. All rights reserved.</p>
+  </div>
+  <script>
+    // Countdown Timer Script
+    function updateCountdown() {
+      const eventDate = new Date("June 5, 2026 08:00:00 CDT").getTime();
+      const now = new Date().getTime();
+      const distance = eventDate - now;
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("countdown").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+      if (distance < 0) {
+        document.getElementById("countdown").innerHTML = "Event has started!";
+      }
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+
+  <!-- Dropdown Menu Script -->
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const dropdownContent = document.getElementById("myDropdown");
+
+    menuBtn.addEventListener('click', function(event) {
+      event.stopPropagation();
+      dropdownContent.classList.toggle('show');
+    });
+
+    window.addEventListener('click', function(event) {
+      if (!dropdownContent.contains(event.target)) {
+        if (dropdownContent.classList.contains('show')) {
+          dropdownContent.classList.remove('show');
+        }
+      }
+    });
+  </script>
+
+  <!-- SPONSOR SLIDESHOW SCRIPT -->
+  <script>
+    let slideIndex = 0;
+    showSlides();
+
+    function showSlides() {
+      let i;
+      let slides = document.getElementsByClassName("sponsor-logo");
+      if (slides.length === 0) return; // Prevent errors if no slides
+      for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+        slides[i].classList.remove("fade");
+      }
+      
+      slideIndex++;
+      
+      if (slideIndex > slides.length) {
+        slideIndex = 1;
+      }
+      
+      slides[slideIndex - 1].style.display = "block"; 
+      slides[slideIndex - 1].classList.add("fade");
+      
+      setTimeout(showSlides, 3000); 
+    }
+  </script>
+
+  <!-- NEWS SLIDER SCRIPT -->
+  <script>
+    const newsGrid = document.querySelector('.news-grid');
+    const prevBtn = document.getElementById('prev-news');
+    const nextBtn = document.getElementById('next-news');
+
+    if (newsGrid && prevBtn && nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        const card = newsGrid.querySelector('.news-card');
+        const scrollAmount = card.offsetWidth + 20; 
+        newsGrid.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      });
+
+      prevBtn.addEventListener('click', () => {
+        const card = newsGrid.querySelector('.news-card');
+        const scrollAmount = card.offsetWidth + 20;
+        newsGrid.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      });
+    }
+  </script>
+</body>
+</html>

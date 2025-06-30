@@ -80,6 +80,9 @@
       gap: 25px;
       align-items: center;
     }
+    a.nav-item {
+      text-decoration: none;
+    }
     .nav-item {
       display: flex;
       flex-direction: column;
@@ -391,18 +394,18 @@
   <div class="header">
     <a href="./index.html"><img src="./logo.png" alt="CMXG Open Logo" class="logo"></a>
     <div class="nav">
-      <button class="nav-item">
+      <a href="./leaderboard.html" class="nav-item">
         <img src="./leaderboard.png" alt="Leaderboard" class="nav-icon">
         <span>Leaderboard</span>
-      </button>
-      <button class="nav-item">
+      </a>
+      <a href="./register.html" class="nav-item">
         <img src="./register.png" alt="register" class="nav-icon">
         <span>Register</span>
-      </button>
-      <button class="nav-item">
+      </a>
+      <a href="./sabotage.html" class="nav-item">
         <img src="./sabotage.png" alt="sabotage" class="nav-icon">
         <span>Sabotage</span>
-      </button>
+      </a>
 
       <div class="dropdown-container">
         <button id="menuBtn" class="nav-item">
@@ -410,9 +413,9 @@
           <span>Menu</span>
         </button>
         <div id="myDropdown" class="dropdown-content">
-          <a href="#about">About Us</a>
-          <a href="#rules">Tournament Rules</a>
-          <a href="#contact">Contact</a>
+          <a href="./about.html">About Us</a>
+          <a href="./rules.html">Tournament Rules</a>
+          <a href="./contact.html">Contact</a>
         </div>
       </div>
     </div>
@@ -424,7 +427,7 @@
         <h2>76 CMXG Open Countdown</h2>
         <p id="countdown">Calculating...</p>
       </div>
-      <div class="about-section">
+      <div class="about-section" id="about">
         <h2>About The Tournament</h2>
         <p>Get ready, Oklahoma! The 76th Commodities Maintenance Branch from Tinker Air Force Base is proud to present the 76 CMXG Golf Open Tournament, set to electrify the greens of the John Conrad Golf Course in Midwest City, Oklahoma, on June 5th, 2026! Prepare for a day of golf like no other, where skill meets a delightful dose of the unexpected.</p>
       </div>

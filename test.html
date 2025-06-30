@@ -1,0 +1,292 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pro Retires - CMXG Open</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* === GENERAL STYLES & NEW BACKGROUND === */
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #e0e0e0;
+      background-image: url('./pattern.png');
+      background-repeat: repeat;
+      background-color: #000;
+      background-size: 400px; 
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background-color: #000;
+      border-bottom: 1px solid #333;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .logo {
+      height: 40px;
+      flex-shrink: 0;
+    }
+    .nav {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+    a.nav-item, button.nav-item {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      color: #ffd700;
+      font-family: 'Roboto', sans-serif;
+    }
+    .nav-icon {
+      height: 24px;
+      width: 24px;
+      object-fit: contain;
+    }
+    .content {
+      padding: 10px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h2, h3 {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* === DROPDOWN MENU STYLES === */
+    .dropdown-container {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background-color: #000;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+      z-index: 10;
+      border: 1px solid #ffd700;
+      border-radius: 5px;
+      margin-top: 8px;
+    }
+    .dropdown-content a {
+      color: #ffd700;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      text-align: left;
+      font-weight: 600;
+      font-family: 'Roboto', sans-serif;
+    }
+    .dropdown-content a:hover {
+      background-color: #333;
+    }
+    .show {
+      display: block;
+    }
+
+    /* === ARTICLE STYLES === */
+    .article-container {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 8px;
+      margin: 15px auto;
+      max-width: 800px;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      backdrop-filter: blur(4px); /* Glass effect */
+    }
+    .article-header h1 {
+        font-family: 'Oswald', sans-serif;
+        color: #ffd700;
+        font-size: clamp(1.8rem, 5vw, 2.5rem);
+        margin-top: 0;
+        margin-bottom: 5px;
+        line-height: 1.2;
+    }
+    .article-meta {
+        font-size: 0.9rem;
+        color: #bbb;
+        margin-bottom: 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    .article-image {
+        display: block;         /* Allows margin auto to work for centering */
+        margin-left: auto;      /* Centers the image horizontally */
+        margin-right: auto;     /* Centers the image horizontally */
+        margin-bottom: 25px;
+        
+        /* Responsive Sizing */
+        max-width: 100%;        /* Ensures it never overflows its container on mobile */
+        max-height: 550px;      /* Limits the height on large screens to keep it from being huge */
+        width: auto;            /* Lets the browser calculate width based on the height */
+        height: auto;           /* Maintains the aspect ratio */
+
+        /* Display Style */
+        object-fit: contain;    /* Guarantees the entire image is visible without cropping */
+        border-radius: 8px;
+    }
+    .article-body p {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: 1.5em;
+    }
+
+    /* --- MOBILE RESPONSIVE FIXES --- */
+    @media (max-width: 480px) {
+      .header {
+        padding: 10px 10px;
+      }
+      .nav {
+        flex-grow: 1;
+        justify-content: space-around;
+        gap: 0;
+        margin-left: 10px;
+      }
+      .nav-item span {
+        font-size: 10px;
+      }
+      .article-container {
+        padding: 15px;
+      }
+    }
+    .footer {
+      text-align: center;
+      padding: 15px;
+      margin-top: 20px;
+      background-color: #000;
+      color: #ffd700;
+      font-size: 12px;
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="./index.html"><img src="./logo.png" alt="CMXG Open Logo" class="logo"></a>
+    <div class="nav">
+      <a href="./leaderboard.html" class="nav-item">
+        <img src="./leaderboard.png" alt="Leaderboard" class="nav-icon">
+        <span>Leaderboard</span>
+      </a>
+      <a href="./register.html" class="nav-item">
+        <img src="./register.png" alt="register" class="nav-icon">
+        <span>Register</span>
+      </a>
+      <a href="./sabotage.html" class="nav-item">
+        <img src="./sabotage.png" alt="sabotage" class="nav-icon">
+        <span>Sabotage</span>
+      </a>
+      <div class="dropdown-container">
+        <button id="menuBtn" class="nav-item">
+          <img src="./menu.png" alt="Menu" class="nav-icon">
+          <span>Menu</span>
+        </button>
+        <div id="myDropdown" class="dropdown-content">
+          <a href="./about.html">About Us</a>
+          <a href="./rules.html">Tournament Rules</a>
+          <a href="./contact.html">Contact</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="article-container">
+        <div class="article-header">
+            <h1>#1 Ranked CMXG Pro Retires After Spraining Liver</h1>
+        </div>
+        <p class="article-meta">Published 3 Hours Ago by CMXG Press</p>
+        <img src="./pro.png" alt="A CMXG professional golfer in action" class="article-image">
+        <div class="article-body">
+<p>In a shocking turn of events that has sent ripples through the local golf community, top-ranked CMXG pro Benjamin Case announced his immediate retirement from competitive golf. The cause? A freak injury described by his agent as a "severely sprained liver," sustained during a pre-tournament celebratory dinner.</p>
+<p>Witnesses report that Case, known for his powerful swing and even more powerful post-game celebrations, was attempting to demonstrate the "perfect follow-through" using a fully-loaded appetizer platter at a local Chili's. The unexpected torque, combined with what doctors are calling "extreme internal lubrication," led to the unprecedented medical diagnosis.</p>
+<p>"We've seen sprained ankles, torn rotator cuffs, even the occasional case of the yips," said Dr. Alistair Finch, a sports medicine specialist. "But a sprained liver? This is one for the textbooks. It suggests a level of athletic—and perhaps social—commitment we rarely see."</p>
+<p>Case's retirement leaves a power vacuum at the top of the CMXG rankings just weeks before the 76 CMXG Open. "It's anyone's game now," commented one rival golfer. "But mostly, we're just impressed. I didn't even know you could do that." The CMXG Open committee has wished Benjamin a speedy recovery and has already begun discussions on adding "liver safety" to the tournament's official rulebook.</p>
+        </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>© 2026 CMXG Open. All rights reserved.</p>
+  </div>
+
+  <!-- Dropdown Menu Script -->
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const dropdownContent = document.getElementById("myDropdown");
+
+    menuBtn.addEventListener('click', function(event) {
+      event.stopPropagation();
+      dropdownContent.classList.toggle('show');
+    });
+
+    window.addEventListener('click', function(event) {
+      if (!dropdownContent.contains(event.target)) {
+        if (dropdownContent.classList.contains('show')) {
+          dropdownContent.classList.remove('show');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

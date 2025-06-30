@@ -54,7 +54,7 @@
       margin: 0;
       padding: 0;
       color: #e0e0e0;
-      background-image: url('pattern.png');
+      background-image: url('./pattern.png');
       background-repeat: repeat;
       background-color: #000;
       background-size: 400px; 
@@ -79,7 +79,8 @@
       gap: 25px;
       align-items: center;
     }
-    .nav-item {
+    a.nav-item, button.nav-item {
+      text-decoration: none;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -221,29 +222,29 @@
 </head>
 <body>
   <div class="header">
-    <a href="index.html"><img src="logo.png" alt="CMXG Open Logo" class="logo"></a>
+    <a href="./index.html"><img src="./logo.png" alt="CMXG Open Logo" class="logo"></a>
     <div class="nav">
-      <button class="nav-item">
-        <img src="leaderboard.png" alt="Leaderboard" class="nav-icon">
+      <a href="./leaderboard.html" class="nav-item">
+        <img src="./leaderboard.png" alt="Leaderboard" class="nav-icon">
         <span>Leaderboard</span>
-      </button>
-      <button class="nav-item">
-        <img src="register.png" alt="register" class="nav-icon">
+      </a>
+      <a href="./register.html" class="nav-item">
+        <img src="./register.png" alt="register" class="nav-icon">
         <span>Register</span>
-      </button>
-      <button class="nav-item">
-        <img src="sabotage.png" alt="sabotage" class="nav-icon">
+      </a>
+      <a href="./sabotage.html" class="nav-item">
+        <img src="./sabotage.png" alt="sabotage" class="nav-icon">
         <span>Sabotage</span>
-      </button>
+      </a>
       <div class="dropdown-container">
         <button id="menuBtn" class="nav-item">
-          <img src="menu.png" alt="Menu" class="nav-icon">
+          <img src="./menu.png" alt="Menu" class="nav-icon">
           <span>Menu</span>
         </button>
         <div id="myDropdown" class="dropdown-content">
-          <a href="#about">About Us</a>
-          <a href="#rules">Tournament Rules</a>
-          <a href="#contact">Contact</a>
+          <a href="./about.html">About Us</a>
+          <a href="./rules.html">Tournament Rules</a>
+          <a href="./contact.html">Contact</a>
         </div>
       </div>
     </div>
@@ -255,7 +256,7 @@
             <h1>#1 Ranked CMXG Pro Retires After Spraining Liver</h1>
         </div>
         <p class="article-meta">Published 3 Hours Ago by CMXG Press</p>
-        <img src="pro.png" alt="A CMXG professional golfer in action" class="article-image">
+        <img src="./pro.png" alt="A CMXG professional golfer in action" class="article-image">
         <div class="article-body">
 <p>In a shocking turn of events that has sent ripples through the local golf community, top-ranked CMXG pro Benjamin Case announced his immediate retirement from competitive golf. The cause? A freak injury described by his agent as a "severely sprained liver," sustained during a pre-tournament celebratory dinner.</p>
 <p>Witnesses report that Case, known for his powerful swing and even more powerful post-game celebrations, was attempting to demonstrate the "perfect follow-through" using a fully-loaded appetizer platter at a local Chili's. The unexpected torque, combined with what doctors are calling "extreme internal lubrication," led to the unprecedented medical diagnosis.</p>

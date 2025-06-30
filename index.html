@@ -56,10 +56,10 @@
       margin: 0;
       padding: 0;
       color: #e0e0e0;
-      background-image: url('pattern.png');
+      /* EDITED: Using explicit relative path for server compatibility */
+      background-image: url('./pattern.png');
       background-repeat: repeat;
       background-color: #000;
-      /* EDITED: Control the size of the repeating background pattern. Adjust this value as needed. */
       background-size: 400px; 
     }
     .header {
@@ -391,24 +391,24 @@
 </head>
 <body>
   <div class="header">
-    <a href="index.html"><img src="logo.png" alt="CMXG Open Logo" class="logo"></a>
+    <a href="./index.html"><img src="./logo.png" alt="CMXG Open Logo" class="logo"></a>
     <div class="nav">
       <button class="nav-item">
-        <img src="leaderboard.png" alt="Leaderboard" class="nav-icon">
+        <img src="./leaderboard.png" alt="Leaderboard" class="nav-icon">
         <span>Leaderboard</span>
       </button>
       <button class="nav-item">
-        <img src="register.png" alt="register" class="nav-icon">
+        <img src="./register.png" alt="register" class="nav-icon">
         <span>Register</span>
       </button>
       <button class="nav-item">
-        <img src="sabotage.png" alt="sabotage" class="nav-icon">
+        <img src="./sabotage.png" alt="sabotage" class="nav-icon">
         <span>Sabotage</span>
       </button>
 
       <div class="dropdown-container">
         <button id="menuBtn" class="nav-item">
-          <img src="menu.png" alt="Menu" class="nav-icon">
+          <img src="./menu.png" alt="Menu" class="nav-icon">
           <span>Menu</span>
         </button>
         <div id="myDropdown" class="dropdown-content">
@@ -436,8 +436,8 @@
           <button id="prev-news" class="slider-arrow prev-arrow" aria-label="Previous News Item"><</button>
           <div class="news-grid">
             <!-- News Card 1 -->
-            <a href="article1.html" class="news-card">
-              <img src="pro.png" alt="#1 Ranked CMXG Pro" class="news-card-background-image">
+            <a href="./article1.html" class="news-card">
+              <img src="./pro.png" alt="#1 Ranked CMXG Pro" class="news-card-background-image">
               <div class="news-card-content">
                 <span class="news-card-tag">PLAYER NEWS</span>
                 <h3>#1 Ranked CMXG Pro Retires After Spraining Liver</h3>
@@ -446,7 +446,7 @@
             </a>
             <!-- News Card 2 -->
             <a href="#" class="news-card">
-              <img src="beer.PNG" alt="Cold Beer For Sale" class="news-card-background-image">
+              <img src="./beer.png" alt="Cold Beer For Sale" class="news-card-background-image">
               <div class="news-card-content">
                 <span class="news-card-tag">EVENT INFO</span>
                 <h3>Cold Beer For Sale</h3>
@@ -455,7 +455,7 @@
             </a>
             <!-- News Card 3 -->
             <a href="#" class="news-card">
-              <img src="sign.png" alt="Tournament Registration" class="news-card-background-image">
+              <img src="./sign.png" alt="Tournament Registration" class="news-card-background-image">
               <div class="news-card-content">
                 <span class="news-card-tag">REGISTRATION</span>
                 <h3>Spots Still Available For the Tournament</h3>
@@ -473,11 +473,11 @@
         <h2>Sponsors</h2>
         <p>Thank you to our partners for making this event possible.</p>
         <div class="sponsor-logos">
-          <img src="ad (1).jpg" alt="Sponsor Ad 1" class="sponsor-logo">
-          <img src="ad (2).jpg" alt="Sponsor Ad 2" class="sponsor-logo">
-          <img src="ad (3).jpg" alt="Sponsor Ad 3" class="sponsor-logo">
-          <img src="ad (4).jpg" alt="Sponsor Ad 4" class="sponsor-logo">
-          <img src="ad (5).jpg" alt="Sponsor Ad 5" class="sponsor-logo">
+          <img src="./ad (1).jpg" alt="Sponsor Ad 1" class="sponsor-logo">
+          <img src="./ad (2).jpg" alt="Sponsor Ad 2" class="sponsor-logo">
+          <img src="./ad (3).jpg" alt="Sponsor Ad 3" class="sponsor-logo">
+          <img src="./ad (4).jpg" alt="Sponsor Ad 4" class="sponsor-logo">
+          <img src="./ad (5).jpg" alt="Sponsor Ad 5" class="sponsor-logo">
         </div>
       </div>
     </div>

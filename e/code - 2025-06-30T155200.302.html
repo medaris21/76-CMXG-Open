@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced Mini Golf</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #333;
+            color: white;
+        }
+        canvas {
+            border: 4px solid #f0f0f0;
+            background-color: #2a8c2e;
+            cursor: crosshair;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        h1 {
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px #000;
+        }
+        p {
+            margin-top: 5px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Putt-Putt Pro</h1>
+    <canvas id="golfCanvas" width="900" height="600"></canvas>
+    <p>Click and hold to aim, release to shoot. Click to advance screens.</p>
+
+    <script>
+    // Level Data and Audio Manager are unchanged...
+    const levels = [
+        {
+            par: 2,
+            ballStart: { x: 100, y: 300 },
+            hole: { x: 800, y: 300 },
+            obstacles: [
+                { type: 'rect', x: 450, y: 200, width: 20, height: 200 },
+            ],
+            terrains: []
+        },
+        {
+            par: 3,
+            ballStart: { x: 100, y: 100 },
+            hole: { x: 800, y: 500 },
+            obstacles: [
+                { type: 'rect', x: 250, y: 0, width: 20, height: 400 },
+                { type: 'rect', x: 650, y: 200, width: 20, height: 400 },
+            ],
+            terrains: [
+                 { type: 'rough', x: 0, y: 450, width: 900, height: 150 }
+            ]
+        },
+        {
+            par: 4,
+            ballStart: { x: 450, y: 550 },
+            hole: { x: 450, y: 50 },
+            obstacles: [
+                { type: 'circle', x: 450, y: 300, radius: 80 },
+                { type: 'rect', x: 200, y: 150, width: 150, height: 20 },
+                { type: 'rect', x: 550, y: 150, width: 150, height: 20 },
+            ],
+            terrains: [
+                { type: 'rough', x: 300, y: 220, width: 300, height: 160 }
+            ]
+        }
+    ];
+
+    const audioManager = {
+        sounds: {},
+        loadSound(name, src) { this.sounds[name] = new Audio(src); },
+        play(name) { if (this.sounds[name]) { this.sounds[name].currentTime = 0; this.sounds[name].play(); } },
+        init() {
+            this.loadSound('hit', 'data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YUIAAAD//v0/8/79/f/+/f3/Af8E/wX/Bf8E/wL/Av8B/wH/Af8B/vz+9v7z/uj+4/7g/uH+5/7q/vH+9f76/v7/AP8E/wb/CP8J/wj/CP8H/wX/A/8A/vr+7f7p/un+6f7n/ub+5v7l/uX+5f7m/uf+6/7v/vT++f8C/wX/B/8K/wz/DP8L/wn/B/8F/wP/AP76/vH+7P7m/uT+4f7g/uD+4P7h/uP+5f7q/vD+9v78/wD/A/8G/wn/C/8N/w3/C/8J/wb/A/8A/vn+8f7s/ub+4/7i/uH+4f7g/t/93f7d/t7/3/7h/ub+6/7x/vo/9/8A/wT/B/8L/wz/DP8L/wr/Bv8D/wD++f7z/u3+6P7m/uP+4f7f/d793f3d/d393v3f/uL+5v7q/vL++f8D/wX/CP8L/wz/C/8K/wj/Bf8C/wD++v7z/u3+6P7m/uP+4f7f/d/+3v7c/tz+3P7d/t/+4P7k/un+8f76/wD/A/8H/wn/C/8M/wv/Cv8H/wP/AP75/vL+7f7p/ub+4v7g/t/+3v7b/tn+2f7Z/tv+3P7f/uL+5/7r/vL++v8B/wT/B/8L/wz/C/8K/wn/Bf8C/wD++v7z/u3+6f7m/uL+3/7c/tr+1f7T/tP+1P7W/ts/3P7f/uL+5/7s/vP++v8B/wT/B/8K/wz/C/8J/wf/A/8A/vn+8v7t/un+5v7i/t/+3P7Z/tb+1P7S/tH+0f7T/tX+2v7c/t/+4v7n/uv+8v77/wE/A/8G/wn/C/8M/wv/Cf8F/wL/AP76/vL+7f7p/ub+4v7g/t3+2v7V/tL+0P7P/s/+0P7S/tX+2/7d/uH+5/7s/vP++v8B/wT/B/8K/ww/C/8J/wb/A/8A/vn+8v7t/un+5v7j/uD+3P7Z/tT+0v7Q/s7+zv7O/tD+0v7V/tr+3P7g/uX+6/7x/vo/AP8D/wb/Cf8L/wz/C/8K/wj/Bf8C/wD++v7z/u3+6v7n/uT+4f7d/tr+1f7S/tD+z/7O/s7+z/7Q/tL+1v7a/t3+4f7k/ur+8f77/wD/A/8G/wn/Cv8L/wv/Cv8H/wT/Av8A/vv+8/7u/us/6v7o/uX+4v7f/tz+2f7U/tL+0P7P/s/+0P7S/tT+2f7c/t/+4v7m/uv+8f77/wD/A/8G/wn/Cv8L/wv/Cf8G/wP/AP77/vP+7v7q/uj+5v7k/uD+3f7b/tf+1P7T/tH+0f7S/tT+1/7b/t3+4P7k/un+7/7z/vv/Af8D/wb/Cf8K/wv/C/8J/wf/A/8A/vv+8/7v/uv+6P7m/uT+4P7d/ts/2P7V/tP+0v7S/tL+1P7X/tn+3P7f/uL+5/7r/vD++v8B/wT/B/8K/wv/C/8K/wn/Bf8C/wD++v7z/u7+6/7o/ub+4/7h/t/+2/7Y/tb+1P7T/tP+1P7W/tj+2/7d/uD+5P7p/u/++P8A/wL/Bf8H/wr/C/8L/wn/B/8E/wL/AP78/vf+8v7v/uv+6P7n/uT+4v7f/t3+2v7X/tb+1f7V/tb+1/7Z/tv+3P7g/uT+6P7v/vT++v8B/wL/Bf8I/wr/Cv8K/wn/B/8E/wL/Af79/vf+8v7v/uv+6P7n/uT+4v7g/t3+2/7Z/tj+2P7Y/tj+2P7Z/ts/3P7f/uL+5/7q/u/++P8A/wL/Bf8H/wr/Cv8K/wn/B/8D/wH/Af79/vh+8v7v/uv+6P7n/uX+4v7f/t3+2v7X/tb+1v7V/tb+1v7W/tr+2/7d/uD+5P7o/uv+8f76/wD/Av8E/wf/Cf8K/wq/Cf8G/wP/Af8B/vz+9/7x/u3+6v7o/uf+5P7j/uD+3f7b/tn+1/7W/tb+1v7W/tb+1/7Z/tt+3P7g/uT+6P7q/u7+8f75/wD/Av8E/wb/Cf8J/wn/CP8F/wP/Af8B/v3++P70/u/+7P7q/uj+5v7k/uP+4f7d/tv+2f7Y/tf+1f7V/tX+1f7W/tf+2P7Z/tv+3f7h/uX+6f7r/u/+8v76/wD/Av8E/wb/CP8J/wj/B/8F/wL/AP8A/v3++P70/vD+7v7r/uj+5v7l/uL+3/7c/ts/2P7X/tX+1P7U/tT+1P7V/tX+1/7Y/tn+2v7c/t/+4v7n/uv+7/7z/vo/AP8C/wX/B/8I/wj/B/8E/wL/Af7+/vf+9P7v/u3+6/7o/ub+5P7j/uD+3f7b/tn+1/7W/tX+1P7U/tL+0v7S/tP+1P7V/tb+2f7b/t3+4f7l/un+7P7x/vn/AP8B/wT/Bv8H/wj/B/8E/wL/Af79/vn+9P7v/u3+6/7o/uf+5P7j/uD+3v7c/ts/2P7X/tT+0v7R/tD+z/7P/s/+z/7P/tD+0f7T/tX+2P7b/t3+4f7l/un+7P7x/vo/AP8C/wT/Bv8H/wg/Bv8E/wH/Af7+/vn+9P7w/u7+6/7o/ub+5P7k/uL+3/7c/tp+1/7T/tH+z/7O/sv+y/7L/sv+zP7O/tD+0v7U/tb+2v7d/uH+5f7p/uz+8f76/wD/Ag==');
+            this.loadSound('bounce', 'data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YSCgAAAAgAABAoMAAAYDCAAJAgwDDgMPAwgDCQIKAAEAAACAAAEChQAAAwMAAAIDAAIAAAAAAAABAoMAAQQDAAECAAAAAAAAAAECAwACAQAAAAAAAAGfAwcABwMJAAYDBQACAwAAAAAAAACfAwEAAgIAAAMCAAAAAAAAAYEDAAEBgP//gP//f4D//4CBgAGAgP+Af3+Af39/f35/fH58fXt8ent6e3h5eXh4eHh3eHd3d3d2d3Z1dnh3d3l4eXp6fHx/gIGChIWHiYqLjI2Oj5CSlJWWl5iZmpucnZ+goaKjpKWmp6ipqqurrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfa29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w==');
+            this.loadSound('sink', 'data:audio/wav;base64,UklGRkYBAABXQVZFZm10IBAAAAABAAIARKwAABCxAgAEABAAZGF0YUIBAACAgICAgICAgICAgICAgICAgICAgICAgIAAgASACoAagB6AIYAngDKANYA5gDyAP8BCQSbBP4Figj6CRoLHQv1DEgNeg6gD9AQ+hJ6FLoVrhbEF+EYbBo4G1gcOh0cHlwfYCBQIWwi5CQ8JgAnNCkUKlEr8i28LwgwSDKEMtA0AjXBNuI3IDgWOUY6XDtBPB89cj4iP0lAXkKOQ+pENkY8R65JbUuqTHVNfU6xT7FPwVAdUfpUpValV7pYyVngWv5crl6BX5xgvmG4YxZkSmVlZ3RoBGpValZtWG5jcGV0e3p/fYR/h4aHgYqHjIuMjpCSlZaXmJqbnJ2foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfa29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAAMABQAHAAgACgAMAA4ADwARABMAFQAXABkAGwAdAB8AIQEjAScBKgEtAS8BMQEzATUBNwE5ATsBPQFAAVIBSgFOAVIBVQFZAVsBXQFeAWECYQJjAmUCZwJpAmsCbQJvAnECcwJ1AXYBewGMAY4BoAGiAaQBpwGpAasBrAGzAbcBvQG/AcIBxQHHAccBywHMAc4B0gHUAdYB2AHaAdsB3wHhAecB6AHqAesB8AHyAfoCAwQMAhICFQIbAiICHgImAioCLgIwAjUCPgJJAksCTwJRAVUCVgJaAl4CYgJkAmYCaAJqAmwCcgJ0AnYCeAJ+AoEChQKIAooCjAKOAo8CkAKSApQCmAKaApsCnAKhAqMCpwKrAq8CswK1AroCvAK/AsMCxwLLAs8C0wLVAtcC2gLcAt4C3wLhAuMC5QLnAugC7QHsAvMC9gL3AvkC/QMBBAUEBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfa29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w==');
+        }
+    };
+    
+    const game = {
+        canvas: null, ctx: null,
+        
+        config: {
+            BALL_RADIUS: 8, HOLE_RADIUS: 14, MAX_POWER: 100, POWER_PER_SECOND: 75,
+            FRICTION: 0.985, ROUGH_FRICTION: 0.95, SPEED_FACTOR: 0.12,
+            STOP_THRESHOLD: 0.05,
+            // *** NEW ***: Speed below which the hole can capture the ball.
+            CAPTURE_SPEED_THRESHOLD: 2.5 
+        },
+
+        state: {
+            // *** NEW ***: Added SINKING state.
+            gameState: 'TITLE', // TITLE, PLAYING, SINKING, LEVEL_COMPLETE, GAME_COMPLETE
+            currentLevelIndex: 0,
+            ball: { x: 0, y: 0, vx: 0, vy: 0, radius: 8 },
+            hole: { x: 0, y: 0 },
+            mouse: { x: 0, y: 0 },
+            isAiming: false,
+            isBallMoving: false,
+            levelCompleteData: null,
+            holdStartTime: 0,
+            shots: 0,
+            totalShots: 0,
+        },
+
+        init() {
+            this.canvas = document.getElementById('golfCanvas');
+            this.ctx = this.canvas.getContext('2d');
+            audioManager.init();
+            this.addEventListeners();
+            requestAnimationFrame(this.gameLoop.bind(this));
+        },
+        
+        loadLevel(levelIndex) {
+            const level = levels[levelIndex];
+            this.state.currentLevelIndex = levelIndex;
+            this.state.ball = { ...level.ballStart, vx: 0, vy: 0, radius: this.config.BALL_RADIUS };
+            this.state.hole = { ...level.hole };
+            this.state.shots = 0;
+            this.state.isBallMoving = false;
+            this.state.gameState = 'PLAYING';
+        },
+
+        addEventListeners() {
+            // ... (Event listeners are unchanged)
+            this.canvas.addEventListener('mousemove', e => this.handleMouseMove(e));
+            this.canvas.addEventListener('mousedown', e => this.handleMouseDown(e));
+            this.canvas.addEventListener('mouseup', e => this.handleMouseUp(e));
+        },
+
+        handleMouseMove(e) {
+            const rect = this.canvas.getBoundingClientRect();
+            this.state.mouse.x = e.clientX - rect.left;
+            this.state.mouse.y = e.clientY - rect.top;
+        },
+
+        handleMouseDown(e) {
+            switch (this.state.gameState) {
+                case 'TITLE':
+                    this.loadLevel(0);
+                    break;
+                case 'PLAYING':
+                    if (!this.state.isBallMoving) {
+                        this.state.isAiming = true;
+                        this.state.holdStartTime = performance.now();
+                    }
+                    break;
+                case 'LEVEL_COMPLETE':
+                case 'GAME_COMPLETE':
+                    this.state.currentLevelIndex++;
+                    if (this.state.currentLevelIndex < levels.length) {
+                        this.loadLevel(this.state.currentLevelIndex);
+                    } else {
+                        this.state.gameState = 'TITLE'; 
+                        this.state.totalShots = 0;
+                    }
+                    break;
+            }
+        },
+
+        handleMouseUp(e) {
+            if (this.state.gameState === 'PLAYING' && this.state.isAiming) {
+                const holdTime = (performance.now() - this.state.holdStartTime) / 1000;
+                const power = Math.min(holdTime * this.config.POWER_PER_SECOND, this.config.MAX_POWER);
+                const dx = this.state.mouse.x - this.state.ball.x;
+                const dy = this.state.mouse.y - this.state.ball.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist > 1) {
+                    const dirX = dx / dist;
+                    const dirY = dy / dist;
+                    this.state.ball.vx = dirX * power * this.config.SPEED_FACTOR;
+                    this.state.ball.vy = dirY * power * this.config.SPEED_FACTOR;
+                    this.state.isBallMoving = true;
+                    this.state.shots++;
+                    audioManager.play('hit');
+                }
+                this.state.isAiming = false;
+            }
+        },
+
+        gameLoop() {
+            this.update();
+            this.draw();
+            requestAnimationFrame(this.gameLoop.bind(this));
+        },
+        
+        // *** MAJOR REFACTOR ***: The update loop is now a state machine.
+        update() {
+            if (!this.state.isBallMoving) return;
+
+            switch(this.state.gameState) {
+                case 'PLAYING':
+                    this.updatePlaying();
+                    break;
+                case 'SINKING':
+                    this.updateSinking();
+                    break;
+            }
+        },
+
+        updatePlaying() {
+            // Check for hole capture first
+            const dxHole = this.state.ball.x - this.state.hole.x;
+            const dyHole = this.state.ball.y - this.state.hole.y;
+            const distToHole = Math.sqrt(dxHole * dxHole + dyHole * dyHole);
+            const speed = Math.sqrt(this.state.ball.vx ** 2 + this.state.ball.vy ** 2);
+
+            if (distToHole < this.config.HOLE_RADIUS && speed < this.config.CAPTURE_SPEED_THRESHOLD) {
+                this.state.gameState = 'SINKING';
+                audioManager.play('sink');
+                return; // Switch to sink state immediately
+            }
+
+            // Apply friction from terrain
+            let currentFriction = this.config.FRICTION;
+            const level = levels[this.state.currentLevelIndex];
+            if (level.terrains) {
+                for(const terrain of level.terrains){
+                    if(terrain.type === 'rough' && this.state.ball.x > terrain.x && this.state.ball.x < terrain.x + terrain.width && this.state.ball.y > terrain.y && this.state.ball.y < terrain.y + terrain.height){
+                        currentFriction = this.config.ROUGH_FRICTION;
+                        break;
+                    }
+                }
+            }
+            this.state.ball.vx *= currentFriction;
+            this.state.ball.vy *= currentFriction;
+            
+            this.state.ball.x += this.state.ball.vx;
+            this.state.ball.y += this.state.ball.vy;
+            
+            this.handleCollisions();
+
+            // Check if ball stopped (without winning)
+            if (Math.abs(this.state.ball.vx) + Math.abs(this.state.ball.vy) < this.config.STOP_THRESHOLD) {
+                this.state.ball.vx = 0;
+                this.state.ball.vy = 0;
+                this.state.isBallMoving = false;
+            }
+        },
+
+        updateSinking() {
+            const dx = this.state.hole.x - this.state.ball.x;
+            const dy = this.state.hole.y - this.state.ball.y;
+            
+            // Gently pull the ball to the center of the hole
+            this.state.ball.x += dx * 0.1;
+            this.state.ball.y += dy * 0.1;
+
+            // Shrink the ball to simulate it falling
+            this.state.ball.radius *= 0.92;
+
+            // Check if the animation is complete
+            if (this.state.ball.radius < 1) {
+                this.state.isBallMoving = false; // Stop all updates
+                this.state.levelCompleteData = {
+                    par: levels[this.state.currentLevelIndex].par,
+                    shots: this.state.shots
+                };
+                this.state.totalShots += this.state.shots;
+                this.state.gameState = (this.state.currentLevelIndex === levels.length - 1) 
+                    ? 'GAME_COMPLETE' 
+                    : 'LEVEL_COMPLETE';
+            }
+        },
+
+        handleCollisions() {
+           // ... (Collision logic is unchanged)
+            const { ball } = this.state;
+            const { BALL_RADIUS } = this.config;
+
+            if (ball.x < BALL_RADIUS || ball.x > this.canvas.width - BALL_RADIUS) {
+                ball.vx *= -1;
+                ball.x = Math.max(BALL_RADIUS, Math.min(this.canvas.width - BALL_RADIUS, ball.x));
+                audioManager.play('bounce');
+            }
+            if (ball.y < BALL_RADIUS || ball.y > this.canvas.height - BALL_RADIUS) {
+                ball.vy *= -1;
+                ball.y = Math.max(BALL_RADIUS, Math.min(this.canvas.height - BALL_RADIUS, ball.y));
+                audioManager.play('bounce');
+            }
+
+            const obstacles = levels[this.state.currentLevelIndex].obstacles;
+            if (!obstacles) return;
+
+            for(const obs of obstacles) {
+                if(obs.type === 'rect') {
+                    const prevX = ball.x - ball.vx;
+                    const prevY = ball.y - ball.vy;
+
+                    if (ball.x + BALL_RADIUS > obs.x && ball.x - BALL_RADIUS < obs.x + obs.width &&
+                        ball.y + BALL_RADIUS > obs.y && ball.y - BALL_RADIUS < obs.y + obs.height) {
+                        
+                        if (prevX + BALL_RADIUS <= obs.x || prevX - BALL_RADIUS >= obs.x + obs.width) { ball.vx *= -1; }
+                        if (prevY + BALL_RADIUS <= obs.y || prevY - BALL_RADIUS >= obs.y + obs.height) { ball.vy *= -1; }
+                        audioManager.play('bounce');
+                    }
+                } else if(obs.type === 'circle') {
+                    const dx = ball.x - obs.x;
+                    const dy = ball.y - obs.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < BALL_RADIUS + obs.radius) {
+                        ball.vx *= -1;
+                        ball.vy *= -1;
+                        audioManager.play('bounce');
+                    }
+                }
+            }
+        },
+        
+        draw() {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            switch (this.state.gameState) {
+                case 'TITLE':
+                    this.drawTitleScreen();
+                    break;
+                case 'PLAYING':
+                case 'SINKING': // *** NEW ***: Continue drawing game while sinking
+                case 'LEVEL_COMPLETE':
+                case 'GAME_COMPLETE':
+                    this.drawGame();
+                    break;
+            }
+        },
+
+        drawGame() {
+            const level = levels[this.state.currentLevelIndex];
+            // Draw terrains and obstacles... (unchanged)
+            if(level.terrains){
+                level.terrains.forEach(terrain => {
+                    if(terrain.type === 'rough'){
+                        this.ctx.fillStyle = '#2a752e';
+                        this.ctx.fillRect(terrain.x, terrain.y, terrain.width, terrain.height);
+                    }
+                });
+            }
+            if(level.obstacles){
+                this.ctx.fillStyle = '#a0522d';
+                level.obstacles.forEach(obs => {
+                    if (obs.type === 'rect') { this.ctx.fillRect(obs.x, obs.y, obs.width, obs.height); } 
+                    else if (obs.type === 'circle') { this.ctx.beginPath(); this.ctx.arc(obs.x, obs.y, obs.radius, 0, Math.PI * 2); this.ctx.fill(); }
+                });
+            }
+
+            // Draw hole first so ball can be on top of it
+            this.ctx.beginPath();
+            this.ctx.arc(this.state.hole.x, this.state.hole.y, this.config.HOLE_RADIUS, 0, Math.PI * 2);
+            this.ctx.fillStyle = 'black';
+            this.ctx.fill();
+            
+            // *** REMOVED ***: The old shrink logic is gone from here, as 'SINKING' state handles it.
+
+            // Draw ball shadow
+            if (this.state.ball.radius > 1) { // Only draw shadow if ball is visible
+                this.ctx.beginPath();
+                this.ctx.arc(this.state.ball.x + 3, this.state.ball.y + 3, this.state.ball.radius, 0, Math.PI * 2);
+                this.ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                this.ctx.fill();
+            }
+
+            // Draw ball
+            this.ctx.beginPath();
+            this.ctx.arc(this.state.ball.x, this.state.ball.y, this.state.ball.radius, 0, Math.PI * 2);
+            this.ctx.fillStyle = 'white';
+            this.ctx.fill();
+            this.ctx.strokeStyle = '#ccc';
+            this.ctx.lineWidth = 1;
+            this.ctx.stroke();
+
+            if (this.state.isAiming) {
+                this.drawAimingLine();
+                this.drawPowerBar();
+            }
+
+            this.drawUI();
+
+            // Draw overlay for level/game complete
+            if ((this.state.gameState === 'LEVEL_COMPLETE' || this.state.gameState === 'GAME_COMPLETE')) {
+                this.drawCompleteScreen();
+            }
+        },
+        
+        // ... (All other draw helpers are unchanged)
+        drawUI() { /* ... */ },
+        drawAimingLine() { /* ... */ },
+        drawPowerBar() { /* ... */ },
+        drawTitleScreen() { /* ... */ },
+        drawCompleteScreen() { /* ... */ }
+    };
+
+    // The rest of the functions are just copied here for completeness
+    game.drawUI = function() {
+        const level = levels[this.state.currentLevelIndex];
+        this.ctx.fillStyle = 'white';
+        this.ctx.font = '24px "Segoe UI", sans-serif';
+        this.ctx.textAlign = 'left';
+        this.ctx.fillText(`Level: ${this.state.currentLevelIndex + 1}/${levels.length}`, 15, 30);
+        this.ctx.fillText(`Par: ${level.par}`, 15, 60);
+        this.ctx.textAlign = 'right';
+        this.ctx.fillText(`Strokes: ${this.state.shots}`, this.canvas.width - 15, 30);
+        this.ctx.fillText(`Total: ${this.state.totalShots}`, this.canvas.width - 15, 60);
+    };
+    game.drawAimingLine = function() {
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.state.ball.x, this.state.ball.y);
+        this.ctx.lineTo(this.state.mouse.x, this.state.mouse.y);
+        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+        this.ctx.lineWidth = 3;
+        this.ctx.setLineDash([5, 10]);
+        this.ctx.stroke();
+        this.ctx.setLineDash([]);
+    };
+    game.drawPowerBar = function() {
+        const holdTime = (performance.now() - this.state.holdStartTime) / 1000;
+        const power = Math.min(holdTime * this.config.POWER_PER_SECOND, this.config.MAX_POWER);
+        const barWidth = (power / this.config.MAX_POWER) * 250;
+        const x = this.state.ball.x - 125;
+        const y = this.state.ball.y > this.canvas.height - 50 ? this.state.ball.y - 40 : this.state.ball.y + 20;
+        this.ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        this.ctx.fillRect(x, y, 250, 15);
+        this.ctx.fillStyle = power < 50 ? 'yellow' : power < 85 ? 'orange' : 'red';
+        this.ctx.fillRect(x, y, barWidth, 15);
+    };
+    game.drawTitleScreen = function() {
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.textAlign = 'center';
+        this.ctx.fillStyle = 'gold';
+        this.ctx.font = '70px "Segoe UI", sans-serif';
+        this.ctx.fillText('Putt-Putt Pro', this.canvas.width / 2, this.canvas.height / 2 - 50);
+        this.ctx.fillStyle = 'white';
+        this.ctx.font = '30px "Segoe UI", sans-serif';
+        this.ctx.fillText('Click to Start', this.canvas.width / 2, this.canvas.height / 2 + 20);
+    };
+    game.drawCompleteScreen = function() {
+        const { par, shots } = this.state.levelCompleteData;
+        let scoreText = '';
+        if (shots === 1) scoreText = 'Hole in One!';
+        else if (shots < par) scoreText = `Birdie! (${shots - par})`;
+        else if (shots === par) scoreText = 'Par!';
+        else scoreText = `Bogey! (+${shots - par})`;
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.textAlign = 'center';
+        this.ctx.fillStyle = 'gold';
+        this.ctx.font = '60px "Segoe UI", sans-serif';
+        if(this.state.gameState === 'GAME_COMPLETE') {
+            this.ctx.fillText('Course Complete!', this.canvas.width / 2, this.canvas.height / 2 - 80);
+            this.ctx.font = '30px "Segoe UI", sans-serif';
+            this.ctx.fillStyle = 'white';
+            this.ctx.fillText(`Final Score: ${this.state.totalShots}`, this.canvas.width / 2, this.canvas.height / 2);
+            this.ctx.fillText('Click to play again.', this.canvas.width / 2, this.canvas.height / 2 + 50);
+        } else {
+            this.ctx.fillText(scoreText, this.canvas.width / 2, this.canvas.height / 2 - 30);
+            this.ctx.font = '30px "Segoe UI", sans-serif';
+            this.ctx.fillStyle = 'white';
+            this.ctx.fillText('Click to continue to the next level.', this.canvas.width / 2, this.canvas.height / 2 + 40);
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => game.init());
+    </script>
+</body>
+</html>

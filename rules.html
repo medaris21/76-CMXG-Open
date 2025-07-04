@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tournament Rules - CMXG Open</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* --- General Styles --- */
+    body { 
+      font-family: 'Roboto', Arial, sans-serif; 
+      margin: 0; 
+      padding: 0; 
+      color: #e0e0e0; 
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="100%" height="100%" fill="%23111111"/><path d="M0 0L200 200M200 0L0 200" stroke="%23222" stroke-width="2"/></svg>'); 
+      background-repeat: repeat; 
+      background-color: #000; 
+      background-size: 30px; 
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .content { 
+      padding: 20px; 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      flex: 1;
+    }
+    h1, h2, h3 { 
+      font-family: 'Oswald', sans-serif; 
+      text-transform: uppercase; 
+      letter-spacing: 1px; 
+      color: #ffd700;
+    }
+    h1 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+    h2 {
+      font-size: 1.8rem;
+      border-bottom: 2px solid #ffd700;
+      padding-bottom: 10px;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+    h3 {
+      font-size: 1.4rem;
+      color: #ffd700;
+      margin-top: 25px;
+      margin-bottom: 15px;
+    }
+
+    /* --- Header & Navigation --- */
+    .header { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      padding: 10px 20px; 
+      background-color: #000; 
+      border-bottom: 1px solid #333; 
+      position: sticky; 
+      top: 0; 
+      z-index: 1000; 
+    }
+    .logo { 
+      height: 40px; 
+      flex-shrink: 0; 
+    }
+    .nav { 
+      display: flex; 
+      gap: 25px; 
+      align-items: center; 
+    }
+    a.nav-item, button.nav-item { 
+      text-decoration: none; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      gap: 4px; 
+      background: none; 
+      border: none; 
+      cursor: pointer; 
+      font-size: 12px; 
+      font-weight: 600; 
+      color: #ffd700; 
+      font-family: 'Roboto', sans-serif; 
+    }
+    .nav-icon { 
+      height: 24px; 
+      width: 24px; 
+      object-fit: contain; 
+    }
+
+    /* --- Rules Container --- */
+    .rules-container {
+      background-color: rgba(0, 0, 0, 0.75); 
+      padding: 30px; 
+      border-radius: 8px; 
+      margin: 20px auto; 
+      border: 1px solid rgba(255, 215, 0, 0.2); 
+      backdrop-filter: blur(4px); 
+      max-width: 800px;
+    }
+    
+    .rule-card {
+      background-color: rgba(17, 17, 17, 0.8);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .rule-card:hover {
+      border-color: #ffd700;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2);
+    }
+    
+    .rule-icon {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .rule-icon img {
+      width: 60px;
+      height: 60px;
+      filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+    }
+    
+    .rule-content p {
+      line-height: 1.6;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    
+    .rule-content ul {
+      padding-left: 20px;
+      margin-bottom: 15px;
+    }
+    
+    .rule-content li {
+      margin-bottom: 8px;
+      position: relative;
+      padding-left: 20px;
+    }
+    
+    .rule-content li:before {
+      content: "•";
+      color: #ffd700;
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 20px;
+    }
+    
+    .rule-highlight {
+      color: #ffd700;
+      font-weight: bold;
+    }
+    
+    .rule-image {
+      width: 100%;
+      border-radius: 8px;
+      margin: 20px 0;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+    
+    /* --- Footer --- */
+    .footer { 
+      text-align: center; 
+      padding: 15px; 
+      background-color: #000; 
+      color: #ffd700; 
+      font-size: 12px; 
+      margin-top: auto;
+    }
+
+    /* --- Dropdown Menu Styles --- */
+    .dropdown-container { 
+      position: relative; 
+      display: inline-block; 
+    }
+    .dropdown-content { 
+      display: none; 
+      position: absolute; 
+      right: 0; 
+      top: 100%; 
+      background-color: #000; 
+      min-width: 160px; 
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); 
+      z-index: 10; 
+      border: 1px solid #ffd700; 
+      border-radius: 5px; 
+      margin-top: 8px; 
+    }
+    .dropdown-content a { 
+      color: #ffd700; 
+      padding: 12px 16px; 
+      text-decoration: none; 
+      display: block; 
+      text-align: left; 
+    }
+    .dropdown-content a:hover { 
+      background-color: #333; 
+    }
+    .show { 
+      display: block; 
+    }
+    
+    /* --- Mobile Responsive Fixes --- */
+    @media (max-width: 768px) { 
+      .header { padding: 10px 10px; } 
+      .nav { flex-grow: 1; justify-content: space-around; gap: 0; margin-left: 10px; } 
+      .nav-item span { font-size: 10px; }
+      .rules-container {
+        padding: 20px 15px;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      h2 {
+        font-size: 1.5rem;
+      }
+      .rule-card {
+        padding: 15px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .rule-icon img {
+        width: 50px;
+        height: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <a href="./index.html"><img src="logo.png" alt="CMXG Open Logo" class="logo"></a>
+    <div class="nav">
+      <a href="./leaderboard.html" class="nav-item"><img src="leaderboard.png" alt="Leaderboard" class="nav-icon"><span>Leaderboard</span></a>
+      <a href="./register.html" class="nav-item"><img src="register.png" alt="register" class="nav-icon"><span>Register</span></a>
+      <a href="./sabotage.html" class="nav-item"><img src="sabotage.png" alt="sabotage" class="nav-icon"><span>Sabotage</span></a>
+      <div class="dropdown-container">
+        <button id="menuBtn" class="nav-item"><img src="menu.png" alt="Menu" class="nav-icon"><span>Menu</span></button>
+        <div id="myDropdown" class="dropdown-content">
+          <a href="./about.html">About Us</a>
+          <a href="./rules.html" class="active">Tournament Rules</a>
+          <a href="./contact.html">Contact</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="content">
+    <div class="rules-container">
+      <h1>Tournament Rules</h1>
+      
+      <div class="rule-card">
+        <div class="rule-icon">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'%3E%3C/path%3E%3Ccircle cx='8.5' cy='7' r='4'%3E%3C/circle%3E%3Cpath d='M20 8v6M23 11h-6'%3E%3C/path%3E%3C/svg%3E" alt="Team Format">
+        </div>
+        <div class="rule-content">
+          <h2>Team Format</h2>
+          <p>Each team in the CMXG Open consists of <span class="rule-highlight">4 players</span> competing together throughout the tournament.</p>
+          <p>Teams are formed based on registration. All team members must be registered before the tournament begins.</p>
+        </div>
+      </div>
+      
+      <div class="rule-card">
+        <div class="rule-icon">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700'%3E%3Cpath d='M4 4h16M4 4v16M4 4l7 7m9-3v10m0 0l-3-3m3 3l3-3'%3E%3C/path%3E%3C/svg%3E" alt="Tee Off">
+        </div>
+        <div class="rule-content">
+          <h2>Tee Off</h2>
+          <p>At the beginning of each hole, <span class="rule-highlight">all four team members hit a tee shot</span>.</p>
+          <p>The order of play is determined by team strategy, but all players must complete their tee shots before proceeding to the next stage of play.</p>
+        </div>
+      </div>
+      
+      <div class="rule-card">
+        <div class="rule-icon">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700'%3E%3Cpath d='M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'%3E%3C/path%3E%3C/svg%3E" alt="Best Ball Selection">
+        </div>
+        <div class="rule-content">
+          <h2>Best Ball Selection</h2>
+          <p>After all tee shots, the team will collectively choose the <span class="rule-highlight">best shot</span> from their four attempts.</p>
+          <p>Once selected:</p>
+          <ul>
+            <li><span class="rule-highlight">All players</span> play their next shot from this chosen location</li>
+            <li>Team members may discuss and agree on the best shot location</li>
+            <li>Selection must be made within 3 minutes to maintain pace of play</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="rule-card">
+        <div class="rule-icon">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700'%3E%3Ccircle cx='12' cy='10' r='3'%3E%3C/circle%3E%3Cpath d='M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z'%3E%3C/path%3E%3C/svg%3E" alt="Ball Placement">
+        </div>
+        <div class="rule-content">
+          <h2>Ball Placement</h2>
+          <p>After selecting the best shot, players must place their ball within specific parameters:</p>
+          <ul>
+            <li><span class="rule-highlight">Within one club length</span> of the selected shot position</li>
+            <li>Must remain in the <span class="rule-highlight">same type of lie</span> (fairway, rough, bunker, etc.)</li>
+            <li>On the green, place the ball within <span class="rule-highlight">one putter head length</span></li>
+          </ul>
+          <p>Players may not improve their lie beyond what the placement rules allow. If the selected shot is in a hazard, all subsequent shots must be played from within that hazard.</p>
+        </div>
+      </div>
+      
+      <div class="rule-card">
+        <div class="rule-icon">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700'%3E%3Cpath d='M9 17l-5-5 5-5'%3E%3C/path%3E%3Cpath d='M20 18v-2a4 4 0 0 0-4-4H4'%3E%3C/path%3E%3C/svg%3E" alt="Scoring">
+        </div>
+        <div class="rule-content">
+          <h2>Scoring</h2>
+          <p>The team continues selecting the best shot and playing from that spot until the ball is holed.</p>
+          <p>Key scoring rules:</p>
+          <ul>
+            <li>Only <span class="rule-highlight">one score per team per hole</span> is recorded</li>
+            <li>The score is the total number of strokes taken from tee to hole</li>
+            <li>Scores must be recorded immediately after completing each hole</li>
+            <li>Both players and a tournament official must sign each scorecard</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="rule-card">
+        <div class="rule-icon">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700'%3E%3Cpath d='M12 19V5M5 12l7-7 7 7'%3E%3C/path%3E%3C/svg%3E" alt="Tee Shot Requirement">
+        </div>
+        <div class="rule-content">
+          <h2>Tee Shot Requirement</h2>
+          <p>To ensure all team members contribute:</p>
+          <ul>
+            <li><span class="rule-highlight">Each player must use at least 2 tee shots</span> during the round</li>
+            <li>Team captains must designate which tee shots will count for each player before the round</li>
+            <li>Failure to meet this requirement results in a 2-stroke penalty per missing tee shot</li>
+          </ul>
+          <p>This rule ensures all team members participate actively throughout the tournament.</p>
+        </div>
+      </div>
+      
+      <div class="rule-card">
+        <div class="rule-icon">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700'%3E%3Cpath d='M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0 1 12 2.944a11.955 11.955 0 0 1-8.618 3.04A12.02 12.02 0 0 0 3 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z'%3E%3C/path%3E%3C/svg%3E" alt="Mulligans">
+        </div>
+        <div class="rule-content">
+          <h2>Mulligans</h2>
+          <p>Mulligans are available for purchase at select holes to improve your golfing ability:</p>
+          <ul>
+            <li>Each mulligan allows a player to <span class="rule-highlight">re-take one shot</span> without penalty</li>
+            <li>Mulligans can be purchased at designated holes throughout the course</li>
+            <li>Cost: different per mulligan (proceeds go to charity)</li>
+          </ul>
+          <p>Mulligans must be declared before the next shot is taken and cannot be used on putts.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>© 2026 CMXG Open. All rights reserved.</p>
+  </div>
+  
+  <script>
+    // Dropdown menu functionality
+    const menuBtn = document.getElementById("menuBtn");
+    const dropdownContent = document.getElementById("myDropdown");
+    
+    if(menuBtn && dropdownContent) {
+      menuBtn.addEventListener('click', function(event) {
+        event.stopPropagation();
+        dropdownContent.classList.toggle('show');
+      });
+      
+      window.addEventListener('click', function(event) {
+        if (!dropdownContent.contains(event.target) && !menuBtn.contains(event.target)) {
+          if (dropdownContent.classList.contains('show')) {
+            dropdownContent.classList.remove('show');
+          }
+        }
+      });
+    }
+    
+    // Highlight current page in menu
+    document.querySelectorAll('.dropdown-content a').forEach(link => {
+      if (link.textContent === 'Tournament Rules') {
+        link.classList.add('active');
+        link.innerHTML = '<strong>▶ ' + link.textContent + '</strong>';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sabotage - CMXG Open</title>
+  <title>Leaderboard - CMXG Open</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -28,6 +28,25 @@
       font-family: 'Oswald', sans-serif; 
       text-transform: uppercase; 
       letter-spacing: 1px; 
+      color: #ffd700;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+    .section-title {
+      position: relative;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      text-align: center;
+      font-size: 2.2rem;
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: #ffd700;
     }
 
     /* --- Header & Navigation --- */
@@ -71,175 +90,63 @@
       object-fit: contain; 
     }
 
-    /* --- View Toggle --- */
-    .view-toggle {
-      display: flex;
-      justify-content: center;
-      margin: 20px 0;
-      gap: 10px;
-    }
-    .toggle-btn {
-      padding: 10px 25px;
-      background-color: rgba(0, 0, 0, 0.7);
-      color: #ffd700;
-      border: 1px solid #ffd700;
-      border-radius: 5px;
-      cursor: pointer;
-      font-family: 'Oswald', sans-serif;
-      text-transform: uppercase;
-      font-size: 16px;
-      transition: all 0.3s;
-    }
-    .toggle-btn.active {
-      background-color: #ffd700;
-      color: #000;
-      font-weight: bold;
-    }
-    .toggle-btn:hover {
-      background-color: rgba(255, 215, 0, 0.3);
-    }
-
-    /* --- Shop View --- */
-    .shop-view {
+    /* --- Leaderboard Container --- */
+    .leaderboard-container { 
       background-color: rgba(0, 0, 0, 0.75); 
-      padding: 25px; 
+      padding: 30px; 
       border-radius: 8px; 
-      margin: 20px auto; 
+      margin: 30px auto; 
       border: 1px solid rgba(255, 215, 0, 0.2); 
       backdrop-filter: blur(4px); 
-      max-width: 800px; 
+      max-width: 1000px; 
     }
-    .shop-title {
-      color: #ffd700;
-      text-align: center;
-      margin-top: 0;
-      margin-bottom: 25px;
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-    }
-    .player-selector {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 20px;
-    }
-    .player-selector label {
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-    .player-selector select {
-      padding: 12px;
-      background-color: #111;
-      border: 1px solid #ffd700;
-      border-radius: 5px;
-      color: #fff;
-      font-size: 16px;
-    }
-    
-    /* Sabotage Options */
-    .sabotage-options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-    @media (max-width: 600px) {
-      .sabotage-options {
-        grid-template-columns: 1fr;
-      }
-    }
-    .sabotage-option {
-      background-color: rgba(17, 17, 17, 0.8);
-      border: 1px solid rgba(255, 215, 0, 0.4);
-      border-radius: 8px;
-      padding: 15px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .sabotage-option:hover {
-      background-color: rgba(30, 30, 30, 0.8);
-      border-color: #ffd700;
-    }
-    .sabotage-option.selected {
-      background-color: rgba(255, 215, 0, 0.15);
-      border-color: #ffd700;
-    }
-    .sabotage-header {
+
+    /* Filters */
+    .leaderboard-filters {
       display: flex;
       justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .filter-group {
+      display: flex;
+      gap: 10px;
       align-items: center;
-      margin-bottom: 8px;
     }
-    .sabotage-name {
-      font-weight: bold;
-      font-size: 18px;
+    .filter-group label {
       color: #ffd700;
-    }
-    .sabotage-price {
-      background-color: #ffd700;
-      color: #000;
-      padding: 4px 10px;
-      border-radius: 12px;
       font-weight: bold;
-      font-size: 14px;
     }
-    .sabotage-description {
-      font-size: 14px;
-      color: #aaa;
-      margin-bottom: 8px;
-    }
-    .sabotage-input {
-      width: 100%;
-      padding: 8px;
+    .filter-select {
+      padding: 10px;
       background-color: #111;
-      border: 1px solid rgba(255, 215, 0, 0.4);
-      border-radius: 4px;
+      border: 1px solid #ffd700;
+      border-radius: 5px;
       color: #fff;
-      margin-top: 5px;
-      display: none;
+      font-size: 14px;
     }
     
-    .sabotage-icon {
-      display: flex;
-      justify-content: center;
-      margin: 20px 0;
-    }
-    .sabotage-icon img {
-      width: 60px;
-      height: 60px;
-    }
-
-    /* --- Leaderboard View --- */
-    .leaderboard-view {
-      background-color: rgba(0, 0, 0, 0.75); 
-      padding: 25px; 
-      border-radius: 8px; 
-      margin: 20px auto; 
-      border: 1px solid rgba(255, 215, 0, 0.2); 
-      backdrop-filter: blur(4px); 
-      max-width: 800px; 
-      display: none;
-    }
-    .leaderboard-title {
-      color: #ffd700;
-      text-align: center;
-      margin-top: 0;
-      margin-bottom: 25px;
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-    }
+    /* Leaderboard Table */
     .leaderboard-table {
       width: 100%;
       border-collapse: collapse;
-      margin: 0 auto;
+      margin: 20px 0;
     }
     .leaderboard-table th {
       background-color: rgba(255, 215, 0, 0.2);
       color: #ffd700;
-      padding: 12px;
+      padding: 15px;
       text-align: left;
       font-family: 'Oswald', sans-serif;
       text-transform: uppercase;
     }
+    .leaderboard-table th.team-rank,
+    .leaderboard-table th.team-score {
+      text-align: center;
+    }
     .leaderboard-table td {
-      padding: 12px;
+      padding: 15px;
       border-bottom: 1px solid rgba(255, 215, 0, 0.1);
     }
     .leaderboard-table tr:nth-child(even) {
@@ -248,83 +155,25 @@
     .leaderboard-table tr:hover {
       background-color: rgba(255, 215, 0, 0.1);
     }
-    .player-rank {
+    .team-rank {
       width: 50px;
       text-align: center;
       font-weight: bold;
-    }
-    .player-name {
-      font-weight: bold;
-    }
-    .player-team {
-      width: 150px;
-      font-style: italic;
-      color: #aaa;
-    }
-    .player-sabotages {
-      text-align: center;
+      font-size: 1.2rem;
       color: #ffd700;
+    }
+    .team-name {
       font-weight: bold;
+      font-size: 1.1rem;
     }
-
-    /* --- Confirmation Modal --- */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-content {
-      background-color: rgba(0, 0, 0, 0.9);
-      padding: 30px;
-      border-radius: 8px;
-      border: 2px solid #ffd700;
-      max-width: 500px;
-      width: 90%;
+    .team-score {
       text-align: center;
-    }
-    .modal-title {
-      color: #ffd700;
-      margin-top: 0;
-      margin-bottom: 20px;
-    }
-    .modal-message {
-      margin-bottom: 25px;
-      font-size: 18px;
-      line-height: 1.5;
-    }
-    .modal-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-    }
-    .modal-btn {
-      padding: 10px 25px;
-      background-color: #ffd700;
-      color: #000;
-      border: none;
-      border-radius: 5px;
-      font-family: 'Oswald', sans-serif;
-      text-transform: uppercase;
       font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
+      color: #ffd700;
+      font-size: 1.2rem;
     }
-    .modal-btn.cancel {
-      background-color: #333;
-      color: #fff;
-    }
-    .modal-btn:hover {
-      background-color: #fff;
-    }
-
-    /* --- Footer --- */
+    
+    /* Footer */
     .footer { 
       text-align: center; 
       padding: 15px; 
@@ -332,9 +181,10 @@
       background-color: #000; 
       color: #ffd700; 
       font-size: 12px; 
+      border-top: 1px solid rgba(255, 215, 0, 0.2);
     }
 
-    /* --- Dropdown Menu Styles --- */
+    /* Dropdown Menu Styles */
     .dropdown-container { 
       position: relative; 
       display: inline-block; 
@@ -366,19 +216,34 @@
       display: block; 
     }
     
-    /* --- Mobile Responsive Fixes --- */
+    /* Mobile Responsive Fixes */
+    @media (max-width: 768px) {
+      .leaderboard-container {
+        padding: 15px;
+      }
+      .leaderboard-filters {
+        flex-direction: column;
+        align-items: center;
+      }
+      .leaderboard-table {
+        font-size: 14px;
+      }
+      .leaderboard-table th, 
+      .leaderboard-table td {
+        padding: 10px 5px;
+      }
+    }
     @media (max-width: 480px) { 
       .header { padding: 10px 10px; } 
       .nav { flex-grow: 1; justify-content: space-around; gap: 0; margin-left: 10px; } 
       .nav-item span { font-size: 10px; }
-      .view-toggle {
+      .section-title {
+        font-size: 1.8rem;
+      }
+      .filter-group {
         flex-direction: column;
-      }
-      .toggle-btn {
+        align-items: flex-start;
         width: 100%;
-      }
-      .player-team {
-        display: none;
       }
     }
   </style>
@@ -404,95 +269,73 @@
 
   <!-- Main Content Area -->
   <div class="content">
-    <div class="view-toggle">
-      <button id="shopViewBtn" class="toggle-btn active">Sabotage Shop</button>
-      <button id="leaderboardViewBtn" class="toggle-btn">Sabotage Leaderboard</button>
-    </div>
-
-    <!-- Shop View -->
-    <div id="shopView" class="shop-view">
-      <h2 class="shop-title">Purchase a Sabotage</h2>
-      
-      <div class="sabotage-icon">
-        <img src="sabotage.png" alt="Sabotage Icon">
-      </div>
-      
-      <div class="player-selector">
-        <label for="playerSelect">Select Player to Sabotage:</label>
-        <select id="playerSelect">
-          <option value="">-- Choose a Player --</option>
-          <!-- Options will be populated by JavaScript -->
-        </select>
-      </div>
-      
-      <div class="sabotage-options">
-        <div class="sabotage-option" data-type="airhorn" data-price="1">
-          <div class="sabotage-header">
-            <div class="sabotage-name">Air Horn</div>
-            <div class="sabotage-price">$1</div>
-          </div>
-          <div class="sabotage-description">Sound an air horn during their putt</div>
-        </div>
-        
-        <div class="sabotage-option" data-type="heckle" data-price="1">
-          <div class="sabotage-header">
-            <div class="sabotage-name">Custom Heckle</div>
-            <div class="sabotage-price">$1</div>
-          </div>
-          <div class="sabotage-description">Deliver a custom message during their shot</div>
-          <input type="text" class="sabotage-input" id="heckleInput" placeholder="Enter your heckle message">
-        </div>
-        
-        <div class="sabotage-option" data-type="song" data-price="20">
-          <div class="sabotage-header">
-            <div class="sabotage-name">Play Song</div>
-            <div class="sabotage-price">$20</div>
-          </div>
-          <div class="sabotage-description">Play a chosen song during their turn</div>
-          <input type="text" class="sabotage-input" id="songInput" placeholder="Enter song name">
-        </div>
-        
-        <div class="sabotage-option" data-type="beer" data-price="10">
-          <div class="sabotage-header">
-            <div class="sabotage-name">Beer Delivery</div>
-            <div class="sabotage-price">$10</div>
-          </div>
-          <div class="sabotage-description">Deliver a beer during their play</div>
+    <h2 class="section-title">Tournament Leaderboard</h2>
+    
+    <div class="leaderboard-container">
+      <!-- Filters -->
+      <div class="leaderboard-filters">
+        <div class="filter-group">
+          <label for="sortFilter">Sort By:</label>
+          <select id="sortFilter" class="filter-select">
+            <option value="score" selected>Total Score</option>
+            <option value="name">Team Name</option>
+          </select>
         </div>
       </div>
       
-      <button id="checkoutBtn" class="toggle-btn">Check Out ($0)</button>
-    </div>
-
-    <!-- Leaderboard View -->
-    <div id="leaderboardView" class="leaderboard-view">
-      <h2 class="leaderboard-title">Sabotage Leaderboard</h2>
-      
+      <!-- Leaderboard Table -->
       <table class="leaderboard-table">
         <thead>
           <tr>
-            <th class="player-rank">Rank</th>
-            <th class="player-name">Player</th>
-            <th class="player-team">Team</th>
-            <th class="player-sabotages">Sabotages</th>
+            <th class="team-rank">Rank</th>
+            <th class="team-name">Team</th>
+            <th class="team-score">Total Score</th>
           </tr>
         </thead>
-        <tbody id="leaderboardBody">
-          <!-- Will be populated by JavaScript -->
+        <tbody>
+          <!-- Team 1 -->
+          <tr>
+            <td class="team-rank">1</td>
+            <td class="team-name">Eagle Squadron</td>
+            <td class="team-score">-18</td>
+          </tr>
+          
+          <!-- Team 2 -->
+          <tr>
+            <td class="team-rank">2</td>
+            <td class="team-name">Birdie Brigade</td>
+            <td class="team-score">-16</td>
+          </tr>
+          
+          <!-- Team 3 -->
+          <tr>
+            <td class="team-rank">3</td>
+            <td class="team-name">Fairway Flyers</td>
+            <td class="team-score">-14</td>
+          </tr>
+          
+          <!-- Team 4 -->
+          <tr>
+            <td class="team-rank">4</td>
+            <td class="team-name">Green Jackets</td>
+            <td class="team-score">-12</td>
+          </tr>
+          
+          <!-- Team 5 -->
+          <tr>
+            <td class="team-rank">5</td>
+            <td class="team-name">Par Breakers</td>
+            <td class="team-score">-10</td>
+          </tr>
+          
+          <!-- Team 6 -->
+          <tr>
+            <td class="team-rank">6</td>
+            <td class="team-name">Sand Savers</td>
+            <td class="team-score">-9</td>
+          </tr>
         </tbody>
       </table>
-    </div>
-  </div>
-
-  <!-- Confirmation Modal -->
-  <div id="confirmationModal" class="modal">
-    <div class="modal-content">
-      <h2 class="modal-title">Sabotage Confirmed!</h2>
-      <p class="modal-message" id="confirmationMessage"></p>
-      <div class="modal-buttons">
-        <button id="viewLeaderboardBtn" class="modal-btn">View Leaderboard</button>
-        <button id="closeModalBtn" class="modal-btn cancel">Close</button>
-      </div>
     </div>
   </div>
 
@@ -501,245 +344,62 @@
     <p>© 2026 CMXG Open. All rights reserved.</p>
   </div>
   
+  <!-- Script for menu and sorting -->
   <script>
-    // Player data with teams
-    const players = [
-      { id: 1, name: "Alex Johnson", team: "Team A", sabotages: 5 },
-      { id: 2, name: "Taylor Smith", team: "Team B", sabotages: 8 },
-      { id: 3, name: "Jordan Williams", team: "Team C", sabotages: 3 },
-      { id: 4, name: "Casey Davis", team: "Team D", sabotages: 12 },
-      { id: 5, name: "Morgan Brown", team: "Team E", sabotages: 6 },
-      { id: 6, name: "Riley Martinez", team: "Team F", sabotages: 9 },
-      { id: 7, name: "Quinn Garcia", team: "Team G", sabotages: 4 },
-      { id: 8, name: "Avery Rodriguez", team: "Team H", sabotages: 7 },
-      { id: 9, name: "Peyton Wilson", team: "Team I", sabotages: 10 },
-      { id: 10, name: "Dakota Thompson", team: "Team J", sabotages: 2 }
-    ];
-    
-    // DOM elements
-    const shopViewBtn = document.getElementById('shopViewBtn');
-    const leaderboardViewBtn = document.getElementById('leaderboardViewBtn');
-    const shopView = document.getElementById('shopView');
-    const leaderboardView = document.getElementById('leaderboardView');
-    const playerSelect = document.getElementById('playerSelect');
-    const checkoutBtn = document.getElementById('checkoutBtn');
-    const leaderboardBody = document.getElementById('leaderboardBody');
-    const confirmationModal = document.getElementById('confirmationModal');
-    const confirmationMessage = document.getElementById('confirmationMessage');
-    const viewLeaderboardBtn = document.getElementById('viewLeaderboardBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const menuBtn = document.getElementById("menuBtn");
-    const dropdownContent = document.getElementById("myDropdown");
-    
-    // Initialize player dropdown
-    function initPlayerDropdown() {
-      playerSelect.innerHTML = '<option value="">-- Choose a Player --</option>';
-      players.forEach(player => {
-        const option = document.createElement('option');
-        option.value = player.id;
-        option.textContent = `${player.name} (${player.team})`;
-        playerSelect.appendChild(option);
-      });
-    }
-    
-    // Initialize leaderboard
-    function updateLeaderboard() {
-      // Sort players by sabotages (descending)
-      const sortedPlayers = [...players].sort((a, b) => b.sabotages - a.sabotages);
-      
-      // Clear existing table
-      leaderboardBody.innerHTML = '';
-      
-      // Populate table
-      sortedPlayers.forEach((player, index) => {
-        const row = document.createElement('tr');
-        
-        const rankCell = document.createElement('td');
-        rankCell.className = 'player-rank';
-        rankCell.textContent = index + 1;
-        
-        const nameCell = document.createElement('td');
-        nameCell.className = 'player-name';
-        nameCell.textContent = player.name;
-
-        const teamCell = document.createElement('td');
-        teamCell.className = 'player-team';
-        teamCell.textContent = player.team;
-
-        const sabotagesCell = document.createElement('td');
-        sabotagesCell.className = 'player-sabotages';
-        sabotagesCell.textContent = player.sabotages;
-        
-        row.appendChild(rankCell);
-        row.appendChild(nameCell);
-        row.appendChild(teamCell);
-        row.appendChild(sabotagesCell);
-        
-        leaderboardBody.appendChild(row);
-      });
-    }
-    
-    // Initialize page
-    initPlayerDropdown();
-    updateLeaderboard();
-    
-    // View toggle functionality
-    shopViewBtn.addEventListener('click', () => {
-      shopView.style.display = 'block';
-      leaderboardView.style.display = 'none';
-      shopViewBtn.classList.add('active');
-      leaderboardViewBtn.classList.remove('active');
-    });
-    
-    leaderboardViewBtn.addEventListener('click', () => {
-      shopView.style.display = 'none';
-      leaderboardView.style.display = 'block';
-      shopViewBtn.classList.remove('active');
-      leaderboardViewBtn.classList.add('active');
-    });
-    
-    // Sabotage option selection
-    const sabotageOptions = document.querySelectorAll('.sabotage-option');
-    let selectedOption = null;
-    let selectedPrice = 0;
-    
-    sabotageOptions.forEach(option => {
-      option.addEventListener('click', () => {
-        // Remove previous selection
-        sabotageOptions.forEach(opt => {
-          opt.classList.remove('selected');
-          const input = opt.querySelector('.sabotage-input');
-          if (input) input.style.display = 'none';
+    document.addEventListener('DOMContentLoaded', function() {
+      // Dropdown menu functionality
+      const menuBtn = document.getElementById("menuBtn");
+      const dropdownContent = document.getElementById("myDropdown");
+      if(menuBtn && dropdownContent) {
+        menuBtn.addEventListener('click', function(event) {
+          event.stopPropagation();
+          dropdownContent.classList.toggle('show');
         });
-        
-        // Set new selection
-        option.classList.add('selected');
-        selectedOption = option.dataset.type;
-        selectedPrice = parseInt(option.dataset.price);
-        
-        // Update checkout button
-        checkoutBtn.textContent = `Check Out ($${selectedPrice})`;
-        
-        // Show input field if needed
-        const input = option.querySelector('.sabotage-input');
-        if (input) {
-          input.style.display = 'block';
-          input.focus();
-        }
-      });
-    });
-    
-    // Checkout functionality
-    checkoutBtn.addEventListener('click', () => {
-      const selectedPlayerId = playerSelect.value;
-      
-      if (!selectedPlayerId) {
-        alert('Please select a player to sabotage!');
-        return;
-      }
-      
-      if (!selectedOption) {
-        alert('Please select a sabotage option!');
-        return;
-      }
-      
-      const player = players.find(p => p.id == selectedPlayerId);
-      
-      if (player) {
-        // Get custom input values if applicable
-        let customValue = '';
-        let customMessage = '';
-        
-        if (selectedOption === 'song') {
-          customValue = document.getElementById('songInput').value.trim();
-          customMessage = customValue ? `"${customValue}"` : 'a random annoying song';
-        } else if (selectedOption === 'heckle') {
-          customValue = document.getElementById('heckleInput').value.trim();
-          customMessage = customValue ? `"${customValue}"` : 'a generic heckle';
-        }
-        
-        // Increment sabotage count
-        player.sabotages++;
-        
-        // Update leaderboard
-        updateLeaderboard();
-        
-        // Show confirmation
-        let message = `Sabotage purchased for <strong>${player.name}</strong>!<br><br>`;
-        message += `Type: <strong>${getSabotageName(selectedOption)}</strong><br>`;
-        
-        if (customMessage) {
-          message += `Details: ${customMessage}<br>`;
-        }
-        
-        message += `Cost: $${selectedPrice}<br>`;
-        message += `Total sabotages: ${player.sabotages}`;
-        
-        confirmationMessage.innerHTML = message;
-        confirmationModal.style.display = 'flex';
-        
-        // Reset form
-        playerSelect.value = '';
-        sabotageOptions.forEach(opt => {
-          opt.classList.remove('selected');
-          const input = opt.querySelector('.sabotage-input');
-          if (input) {
-            input.style.display = 'none';
-            input.value = '';
-          }
-        });
-        selectedOption = null;
-        selectedPrice = 0;
-        checkoutBtn.textContent = 'Check Out ($0)';
-      }
-    });
-    
-    // Helper function to get sabotage name
-    function getSabotageName(type) {
-      switch(type) {
-        case 'airhorn': return 'Air Horn';
-        case 'heckle': return 'Custom Heckle';
-        case 'song': return 'Play Song';
-        case 'beer': return 'Beer Delivery';
-        default: return 'Sabotage';
-      }
-    }
-    
-    // Modal functionality
-    viewLeaderboardBtn.addEventListener('click', () => {
-      confirmationModal.style.display = 'none';
-      shopViewBtn.classList.remove('active');
-      leaderboardViewBtn.classList.add('active');
-      shopView.style.display = 'none';
-      leaderboardView.style.display = 'block';
-    });
-    
-    closeModalBtn.addEventListener('click', () => {
-      confirmationModal.style.display = 'none';
-    });
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', (e) => {
-      if (e.target === confirmationModal) {
-        confirmationModal.style.display = 'none';
-      }
-    });
-    
-    // Dropdown menu functionality
-    if(menuBtn && dropdownContent) {
-      menuBtn.addEventListener('click', function(event) {
-        event.stopPropagation();
-        dropdownContent.classList.toggle('show');
-      });
-      
-      window.addEventListener('click', function(event) {
-        if (!dropdownContent.contains(event.target) && !menuBtn.contains(event.target)) {
-          if (dropdownContent.classList.contains('show')) {
+        window.addEventListener('click', function(event) {
+          if (!dropdownContent.contains(event.target) && dropdownContent.classList.contains('show')) {
             dropdownContent.classList.remove('show');
           }
-        }
-      });
-    }
+        });
+      }
+
+      // --- Leaderboard Sorting Functionality ---
+      const sortFilter = document.getElementById('sortFilter');
+      const tableBody = document.querySelector('.leaderboard-table tbody');
+
+      function sortTable() {
+        if (!tableBody) return; // Guard against null element
+        const sortBy = sortFilter.value;
+        const rows = Array.from(tableBody.querySelectorAll('tr'));
+
+        // Sort the array of team objects
+        rows.sort((a, b) => {
+          const aName = a.querySelector('.team-name').textContent.trim();
+          const aScore = parseInt(a.querySelector('.team-score').textContent.trim(), 10);
+          const bName = b.querySelector('.team-name').textContent.trim();
+          const bScore = parseInt(b.querySelector('.team-score').textContent.trim(), 10);
+
+          if (sortBy === 'score') {
+            // Lower score is better
+            return aScore - bScore;
+          } else if (sortBy === 'name') {
+            // Standard alphabetical sort
+            return aName.localeCompare(bName);
+          }
+          return 0;
+        });
+
+        // Clear the table body and re-append sorted teams
+        tableBody.innerHTML = '';
+        rows.forEach(row => {
+          tableBody.appendChild(row);
+        });
+      }
+
+      // Attach event listener to the dropdown
+      if (sortFilter) {
+        sortFilter.addEventListener('change', sortTable);
+      }
+    });
   </script>
 </body>
 </html>
